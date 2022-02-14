@@ -1,0 +1,72 @@
+<style>
+    .maps-world {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        max-width: 378px;
+    }
+
+    .maps-world .location {
+        width: 52px;
+        height: 52px;
+        background-color: gray;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 12px;
+        border: 1px solid #525050;
+    }
+
+    .location.sound {
+        background-color: #8f6303;
+    }
+
+    .location.my-location {
+        background-color: #000000;
+        color: #fff;
+    }
+
+    .journal {
+        margin: 7px auto;
+    }
+
+    .journal .heading, .entities .heading{
+        font-weight: bold;
+    }
+
+    .entities {
+        margin: 7px auto;
+    }
+</style>
+
+<div class="journal">
+    {{#if journal}}
+        <div class="heading">журнал</div>
+    {{/if}}
+    {{#each journal}}
+        <div>{{this}}</div>
+    {{/each}}
+</div>
+
+<div class="entities">
+    {{#if entities}}
+        <div class="heading">рядом с вами</div>
+    {{/if}}
+    {{#each entities}}
+        <div>
+            <a href="/attack?id={{this.id}}">{{this.name}} (ур.{{this.level}})</a>
+        </div>
+    {{/each}}
+</div>
+
+<div class="maps-world">
+    {{#each maps}}
+        {{#if isMyLocation}}
+            <div class="location my-location">{{this.x}}:{{this.y}}</div>
+        {{else}}
+            <div class="location {{#if isPlayers}}sound{{/if}}">
+                <a href="/go?x={{this.x}}&y={{this.y}}">{{this.x}}:{{this.y}}</a>
+            </div>
+        {{/if}}
+    {{/each}}
+</div>
