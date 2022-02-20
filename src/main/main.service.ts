@@ -1,12 +1,16 @@
-import { Injectable } from '@nestjs/common';
-import { game, Locations, UpdateLocation } from '../walker';
+import {Inject, Injectable} from '@nestjs/common';
+import { Locations, UpdateLocation } from '../walker';
 import { CoordsInterface } from '../interfaces';
-import {PlayerService} from "../player/player.service";
-import {UserPlayer} from "../walker/entity";
+import { PlayerService } from '../player/player.service';
+import { UserPlayer } from '../walker/entity';
+import {Game} from "../walker/game";
 
 @Injectable()
 export class MainService {
-  constructor(private readonly playerService:PlayerService) {}
+  constructor(
+      private readonly playerService: PlayerService,
+      @Inject('GAME') private readonly game: Game
+  ) {}
 
   getMain() {
     const login = 'u.fry';
@@ -18,14 +22,20 @@ export class MainService {
     const userPlayer = player.data as UserPlayer;
     const journal = userPlayer.getJournal();
 
+    const panel = {
+      minLife: player.data.getMinLife(),
+      maxLife: player.data.getMaxLife(),
+    };
+
     userPlayer.clearJournal();
-    MainService.runEventInLocations(player.coords);
+    this.runEventInLocations(player.coords);
 
     return {
       title: 'Description location!',
       maps,
       entities,
-      journal
+      journal,
+      player: panel,
     };
   }
 
@@ -42,7 +52,7 @@ export class MainService {
     const newMaps = [];
 
     for (let i = 0; i < maps.length; i++) {
-      const location = game.locations.find(
+      const location = this.game.locations.find(
         Locations.convertId(maps[i].x, maps[i].y, coords.world, coords.prefix),
       );
 
@@ -58,7 +68,7 @@ export class MainService {
 
   getEntities(coords: CoordsInterface, exception: string) {
     const entities = [];
-    const location = game.locations.find(
+    const location = this.game.locations.find(
       Locations.convertId(coords.x, coords.y, coords.world, coords.prefix),
     );
 
@@ -71,16 +81,22 @@ export class MainService {
         continue;
       }
 
+      const targetAttack = location.findPlayer(entity.getTargetAttack());
+
       entities.push({
         name: entity.getName(),
         level: entity.getLevel(),
-        id: entity.getId()
+        id: entity.getId(),
+        state: {
+          attack: entity.isAttack(),
+        },
+        attackNotify: targetAttack ? `(атак. ${targetAttack.getName()})` : '',
       });
     }
     return entities;
   }
 
-  static runEventInLocations(coords: CoordsInterface) {
+  runEventInLocations(coords: CoordsInterface) {
     const maps = Locations.createMaps(
       {
         x: coords.x,
@@ -92,7 +108,7 @@ export class MainService {
     );
 
     for (let i = 0; i < maps.length; i++) {
-      const updateLocation = new UpdateLocation(game, {
+      const updateLocation = new UpdateLocation(this.game, {
         x: maps[i].x,
         y: maps[i].y,
         world: coords.world,

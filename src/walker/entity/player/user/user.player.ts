@@ -6,11 +6,11 @@ export class UserPlayer extends BasePlayer {
     super(character);
   }
 
-  getJournal():string[] {
+  getJournal(): string[] {
     return this.character.journal;
   }
 
-  addJournal(messages:string): UserPlayer {
+  addJournal(messages: string): UserPlayer {
     this.character.journal.push(messages);
     return this;
   }

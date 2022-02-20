@@ -2,6 +2,7 @@ import { LocationCoords, Locations } from './locations';
 import { Game } from '../game';
 import { BasePlayer, EnemyPlayer, UserPlayer } from '../entity';
 import { Location } from './location';
+import { Attack } from '../battle';
 
 export class UpdateLocation {
   constructor(
@@ -87,7 +88,7 @@ export class UpdateLocation {
             if (player) {
               locationHunted = locationId;
               location.addPlayer(entity);
-              location.notifyUserPlayers(location.getPlayers(),`пришел ${entity.getName()}`);
+              location.notifyUserPlayers(`пришел ${entity.getName()}`);
               break;
             }
           }
@@ -110,7 +111,8 @@ export class UpdateLocation {
           const targetsFilter = targets.filter((target) => {
             if (
               target.getId() !== entity.getId() &&
-              target instanceof UserPlayer
+              target instanceof UserPlayer &&
+              !target.isGhost()
             ) {
               return true;
             }
@@ -138,7 +140,7 @@ export class UpdateLocation {
 
           if (newLocation) {
             newLocation.addPlayer(entity);
-            newLocation.notifyUserPlayers(newLocation.getPlayers(),`пришел ${entity.getName()}`);
+            newLocation.notifyUserPlayers(`пришел ${entity.getName()}`);
           } else {
             this.game.locations.add(newLocationId, new Location([entity]));
           }
@@ -150,19 +152,21 @@ export class UpdateLocation {
         /**
          * ======================= ATTACK ==========================
          */
-        if (
-          entity.isAttack() &&
-          location.findPlayer(entity.getTargetAttack())
-        ) {
-          console.log(entity.getName(), 'атакует', entity.getTargetAttack());
+        const attackTarget = location.findPlayer(entity.getTargetAttack());
+
+        if (entity.isAttack() && attackTarget) {
+          entity.attack(new Attack(location, entity, attackTarget, false));
         }
 
         /**
          * ======================= HUNTED TARGET NOT FOUND ==========================
          */
-        if (entity.isAttack() && !location.findPlayer(entity.getTargetAttack())) {
+        if (
+          entity.isAttack() &&
+          !location.findPlayer(entity.getTargetAttack())
+        ) {
           entity.setAttack(false);
-          entity.setTargetAttack('');
+          entity.setTargetAttack(null);
         }
       }
     }

@@ -1,3 +1,5 @@
+import { CombatCharacteristicInterface } from '../characteristic';
+
 export interface BaseCharacterInterface {
   id: string;
   name: string;
@@ -6,6 +8,10 @@ export interface BaseCharacterInterface {
   state: {
     attack: boolean;
     targetAttack: string;
+    latsTimeAttack: number;
     lastTimeMove: number;
   };
+  minLife: number;
+  maxLife: number;
+  combatCharacteristic: CombatCharacteristicInterface;
 }

@@ -19,20 +19,72 @@ const userWarrior = new WarriorUserPlayer({
   state: {
     attack: false,
     targetAttack: '',
+    latsTimeAttack: 0,
     lastTimeMove: 0,
   },
-  journal:[]
+  journal: [],
+  minLife: 2000,
+  maxLife: 2000,
+  combatCharacteristic: {
+    damage: {
+      cutting: { min: 0, max: 0 },
+      cool: { min: 0, max: 0 },
+      crushing: { min: 0, max: 0 },
+      chopping: { min: 0, max: 0 },
+      magic: { min: 0, max: 0 },
+    },
+    armor: {
+      cutting: 0,
+      cool: 0,
+      crushing: 0,
+      chopping: 0,
+      magic: 0,
+    },
+    params: {
+      hit: 0,
+      evade: 0,
+      parsing: 0,
+      evadeMagic: 0,
+      parsingMagic: 0
+    }
+  },
 });
 
 const orkWarrior = new EnemyPlayer({
   id: 'ork.warrior',
   name: 'орк-воин',
-  level:10,
+  level: 10,
   ghost: false,
   state: {
     attack: false,
     targetAttack: '',
+    latsTimeAttack: 0,
     lastTimeMove: 0,
+  },
+  minLife: 200,
+  maxLife: 200,
+  combatCharacteristic: {
+    damage: {
+      cutting: { min: 0, max: 0 },
+      cool: { min: 0, max: 0 },
+      crushing: { min: 0, max: 0 },
+      chopping: { min: 0, max: 0 },
+      magic: { min: 0, max: 0 },
+    },
+    armor: {
+      cutting: 0,
+      cool: 0,
+      crushing: 0,
+      chopping: 0,
+      magic: 0,
+    },
+    params: {
+      hit: 0,
+      evade: 0,
+      parsing: 0,
+      evadeMagic: 0,
+      parsingMagic: 0
+    }
   },
 });
 

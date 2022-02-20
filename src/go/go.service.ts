@@ -1,12 +1,16 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { game, Locations, Location } from '../walker';
+import {HttpException, HttpStatus, Inject, Injectable} from '@nestjs/common';
+import { Locations, Location } from '../walker';
 import { CoordsInterface } from '../interfaces';
+import {Game} from "../walker/game";
 
 @Injectable()
 export class GoService {
+  constructor(@Inject('GAME') private readonly game: Game) {
+  }
+
   move(newCoords: CoordsInterface) {
     const login = 'u.fry';
-    const myPlayer = game.storage.players.find(login);
+    const myPlayer = this.game.storage.players.find(login);
     const newIdLocation = Locations.convertId(
       newCoords.x,
       newCoords.y,
@@ -17,7 +21,7 @@ export class GoService {
       return new HttpException('Please log in', HttpStatus.UNAUTHORIZED);
     }
 
-    const location = game.locations.find(
+    const location = this.game.locations.find(
       Locations.convertId(myPlayer.x, myPlayer.y, myPlayer.world),
     );
 
@@ -31,12 +35,12 @@ export class GoService {
       return false;
     }
 
-    const newLocation = game.locations.find(newIdLocation);
+    const newLocation = this.game.locations.find(newIdLocation);
 
     if (!newLocation) {
-      game.locations.add(newIdLocation, new Location([player]));
+      this.game.locations.add(newIdLocation, new Location([player]));
     } else {
-      newLocation.notifyUserPlayers(newLocation.getPlayers(),`пришел ${player.getName()}`);
+      newLocation.notifyUserPlayers(`пришел ${player.getName()}`);
       newLocation.addPlayer(player);
     }
 

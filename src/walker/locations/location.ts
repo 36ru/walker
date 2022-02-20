@@ -1,4 +1,4 @@
-import {BasePlayer, UserPlayer} from '../entity';
+import { BasePlayer, UserPlayer } from '../entity';
 
 export class Location {
   private readonly players = new Map();
@@ -42,8 +42,8 @@ export class Location {
     return this;
   }
 
-  notifyUserPlayers(players: IterableIterator<BasePlayer>, messages: string, exceptId?:string): Location  {
-    for (let player of players) {
+  notifyUserPlayers(messages: string, exceptId?: string): Location {
+    for (const player of this.getPlayers()) {
       if (player.getId() === exceptId || !(player instanceof UserPlayer)) {
         continue;
       }

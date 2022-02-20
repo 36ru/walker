@@ -1,4 +1,6 @@
 import { BaseCharacterInterface, BasePlayerInterface } from './interfaces';
+import { Attack } from '../../battle';
+import { ManagerCombatCharacteristic } from './characteristic';
 
 export abstract class BasePlayer implements BasePlayerInterface {
   protected constructor(protected readonly character: BaseCharacterInterface) {}
@@ -56,9 +58,45 @@ export abstract class BasePlayer implements BasePlayerInterface {
     return this.character.level;
   }
 
-  setLevel(value: number): BasePlayerInterface {
+  setLevel(value: number): BasePlayer {
     this.character.level = value;
-    return this
+    return this;
+  }
+
+  getLastTimeAttack(): number {
+    return this.character.state.latsTimeAttack;
+  }
+
+  setLastTimeAttack(value: number): BasePlayer {
+    this.character.state.latsTimeAttack = value;
+    return this;
+  }
+
+  attack(attack: Attack): BasePlayer {
+    attack.make();
+    return this;
+  }
+
+  getMinLife(): number {
+    return this.character.minLife;
+  }
+
+  setMinLife(value: number): BasePlayer {
+    this.character.minLife = value;
+    return this;
+  }
+
+  getMaxLife(): number {
+    return this.character.maxLife;
+  }
+
+  setMaxLife(value: number): BasePlayer {
+    this.character.maxLife = value;
+    return this;
+  }
+
+  getCombatCharacteristic(): ManagerCombatCharacteristic {
+    return new ManagerCombatCharacteristic(this.character.combatCharacteristic);
   }
 
   abstract clone(): BasePlayer;

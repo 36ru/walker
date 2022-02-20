@@ -37,7 +37,20 @@
     .entities {
         margin: 7px auto;
     }
+
+    .panel {
+
+    }
+
+    .panel .life {
+        font-weight: bold;
+        color: #dc0000;
+    }
 </style>
+
+<div class="panel">
+    <span class="life">[{{player.minLife}}/{{player.maxLife}}]</span>
+</div>
 
 <div class="journal">
     {{#if journal}}
@@ -54,7 +67,10 @@
     {{/if}}
     {{#each entities}}
         <div>
-            <a href="/attack?id={{this.id}}">{{this.name}} (ур.{{this.level}})</a>
+            <a href="/attack?id={{this.id}}">
+            {{this.name}} (ур.{{this.level}})
+            {{#if this.state.attack}}{{attackNotify}}{{/if}}
+            </a>
         </div>
     {{/each}}
 </div>
