@@ -1,11 +1,13 @@
 import { Module } from '@nestjs/common';
 import { GoController } from './go.controller';
 import { GoService } from './go.service';
-import {GameModule} from "../game/game.module";
+import {game} from "../walker";
 
 @Module({
   controllers: [GoController],
-  providers: [GoService],
-  imports: [GameModule]
+  providers: [GoService, {
+    provide: 'GAME',
+    useValue: game
+  }],
 })
 export class GoModule {}
